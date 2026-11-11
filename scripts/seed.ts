@@ -2003,6 +2003,42 @@ This course is still in draft while the cluster examples are rewritten against t
     `Created ${countRows(schema.comments)} lesson comments across ${countRows(schema.comments, isNull(schema.comments.parentId))} threads.`
   );
 
+  // ─── Bookmarks and Notes ───
+  // Emma has both on both of her courses, so /saved shows two Courses in each
+  // list. Sophia has a single Bookmark and no Notes. Everyone else has none,
+  // so the empty states stay reachable. Only enrolled Students save.
+
+  db.insert(schema.bookmarks)
+    .values([
+      { userId: students[0].id, lessonId: course1LessonIds[4], createdAt: daysAgo(20) },
+      { userId: students[0].id, lessonId: course2LessonIds[1], createdAt: daysAgo(6) },
+      { userId: students[4].id, lessonId: course1LessonIds[0], createdAt: daysAgo(2) },
+    ])
+    .run();
+
+  db.insert(schema.notes)
+    .values([
+      {
+        userId: students[0].id,
+        lessonId: course1LessonIds[2],
+        body: "Run `npx tsc --init` first.\n# not a heading, *not bold*: plain text only",
+        createdAt: daysAgo(30),
+        updatedAt: daysAgo(3),
+      },
+      {
+        userId: students[0].id,
+        lessonId: course2LessonIds[0],
+        body: "Ask about idempotency for PUT vs PATCH.",
+        createdAt: daysAgo(12),
+        updatedAt: daysAgo(12),
+      },
+    ])
+    .run();
+
+  console.log(
+    `Created ${countRows(schema.bookmarks)} bookmarks and ${countRows(schema.notes)} notes.`
+  );
+
   // ─── Lesson Progress ───
 
   // Helper to mark lessons as complete
